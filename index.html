@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Ludus">
+    <meta name="theme-color" content="#121212">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="icon" type="image/png" href="icona.png">
+    <link rel="apple-touch-icon" href="icona.png">
+    <title>Ludus</title>
+    <style>
+        html, body { margin: 0; height: 100%; background: #121212; overflow: hidden; touch-action: none; overscroll-behavior: none; }
+        #caricamento {
+            position: fixed; inset: 0; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 16px;
+            color: #F0BC42; font: 600 28px/1 system-ui, sans-serif; letter-spacing: 6px; z-index: 10;
+        }
+        #caricamento small { color: #9a9a9a; font: 14px/1.4 system-ui, sans-serif; letter-spacing: 0; text-align: center; padding: 0 24px; }
+        .avviso { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 20;
+            background: #2b2723; color: #f3ede2; border: 1px solid #F0BC42; border-radius: 16px; padding: 14px 16px;
+            font: 15px/1.4 system-ui, sans-serif; display: flex; gap: 12px; align-items: center; justify-content: space-between; }
+        .avviso button { flex: none; border: 0; border-radius: 20px; padding: 10px 16px; background: #F0BC42; color: #241a00; font: 600 14px system-ui, sans-serif; }
+    </style>
+</head>
+<body>
+<div id="caricamento">LUDUS<small id="messaggio">Sto preparando l'app. Al primo avvio ci vogliono alcuni secondi.</small></div>
+<script src="avvio.js"></script>
+<script>
+    // Ludus nel browser usa WebAssembly con garbage collection: Safari lo ha da iOS 18.2,
+    // Chrome da fine 2023. Sui telefoni più vecchi si mostra un avviso invece di una pagina bianca.
+    var supportaWasmGc = false;
+    try {
+        supportaWasmGc = WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 95, 1, 120, 0]));
+    } catch (e) {}
+    if (!supportaWasmGc) {
+        document.getElementById('messaggio').textContent =
+            "Questo browser è troppo vecchio per aprire Ludus. Aggiorna iOS (serve la 18.2 o più recente) oppure apri la pagina con Chrome aggiornato.";
+    } else {
+        var s = document.createElement('script');
+        s.src = 'ludus.js';
+        document.body.appendChild(s);
+    }
+</script>
+</body>
+</html>
